@@ -1,0 +1,3 @@
+{
+  "ignore": ["server/db/migrations", "server/db/seeds", "playground/*"]
+}
