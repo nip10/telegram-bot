@@ -1,0 +1,7 @@
+node_modules/
+.vscode/
+.env
+*.todo
+server/db/knexfile.js
+playground/
+tasks.todo
