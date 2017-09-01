@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // route to receive updates
 app.post(`/bot${token}`, (req, res) => {
-    console.log(req.body);
+    console.log('Received update: ', req.body);
     bot.processUpdate(req.body);
     // remove update from the updates queue by sending a 200 OK
     res.sendStatus(200);
@@ -27,4 +27,3 @@ app.post(`/bot${token}`, (req, res) => {
 app.listen(port, () => {
     console.log(`Telegram/Express app listening on port ${port}.`);
 });
-
