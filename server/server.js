@@ -6,9 +6,10 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const port = process.env.PORT || 4000;
+const token = process.env.TELEGRAM_TOKEN;
 
 // require bot logic
-const { bot, token } = require('./../bot/bot.js');
+const bot = require('./../bot/bot.js');
 
 // for parsing application/json
 app.use(bodyParser.json());
