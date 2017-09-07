@@ -10,8 +10,24 @@ const getCurrentWeather = (lat, lng) => {
     const options = {
         uri: `https://api.darksky.net/forecast/${weatherApiKey}/${lat},${lng}`,
         json: true,
+        qs: {
+            exclude: 'minutely,daily,alerts,flags',
+            units: 'ca',
+        },
     };
-    return rp(options).then(res => res).catch(err => console.log(err));
+    return rp(options).then(res => res.currently).catch(err => console.log(err));
+};
+
+const getDailyWeather = (lat, lng) => {
+    const options = {
+        uri: `https://api.darksky.net/forecast/${weatherApiKey}/${lat},${lng}`,
+        json: true,
+        qs: {
+            exclude: 'minutely,hourly,daily,alerts,flags',
+            units: 'ca',
+        },
+    };
+    return rp(options).then(res => res.daily.data[0]).catch(err => console.log(err));
 };
 
 const getLocationFromCoords = (lat, lng) => {
@@ -26,11 +42,15 @@ const processWeatherCommand = (lat, lng) => {
     const promises = [getCurrentWeather(lat, lng), getLocationFromCoords(lat, lng)];
     return Promise.all(promises.map(promise => promise.reflect()))
         .then(([currentWeather, location]) => {
-            const errors = {};
-            (!currentWeather.isFulfilled()) ? errors.currentWeather = true : currentWeather = currentWeather.value();
-            (!location.isFulfilled()) ? errors.location = true : location = location.value();
-            if (!currentWeather) throw new Error();
-            return `It's currently *${((Number.parseFloat(currentWeather.currently.temperature) - 32) / 1.8).toFixed(1)} ºC* in *${(location) || 'your location'}*.`;
+            if (currentWeather.isFulfilled()) {
+                const weather = currentWeather.value();
+                if (location.isFulfilled()) {
+                    const loc = location.value();
+                    return `It's currently *${(Number.parseFloat(weather.temperature).toFixed(1))} ºC* in *${(loc)}*. Condition: *${weather.summary}*.`;
+                }
+                return `It's currently *${(Number.parseFloat(weather.temperature).toFixed(1))} ºC* in your location. Condition: *${weather.summary}*.`;
+            }
+            throw new Error();
         });
 };
 
