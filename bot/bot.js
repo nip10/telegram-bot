@@ -26,10 +26,11 @@ if (env === 'development') {
     bot.setWebHook(`${url}/bot${token}`);
 }
 
+// Export bot
 module.exports = bot;
+
 // import commands
-const { commands } = require('./commands/index');
+const commands = require('./commands/index');
 
 // send text message to the handler
-bot.on('text', commands.handleText.bind(this, bot));
-
+bot.on('text', commands.handleText.bind(this));
